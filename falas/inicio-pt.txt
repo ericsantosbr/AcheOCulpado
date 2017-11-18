@@ -1,0 +1,4 @@
+Iniciar
+Configuracoes
+Sobre
+Sair
