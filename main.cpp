@@ -43,25 +43,27 @@ void falas_pt(){
 	int cont = 0;
 	int max_char = 50;
 	char buffer[max_char];
-	FILE *arquivo;
 	
-	arquivo = fopen(".//falas//inicio-pt.txt", "r");
-	
-	if(arquivo == NULL){
-		printf("\nArquivo de falas do menu nao existe!\nFavor inserir arquivos na pasta falas\n");
-		exit(1);
+	// Alocação de memória
+	for(i = 1; i <= 5; i++)	{
+		menu_pt = (char **) realloc (menu_pt, sizeof(char *) * i);
+		menu_pt[i - 1] = (char *) malloc(sizeof(char) * max_char);
 	}
 	
-	if(fgets(buffer, max_char, arquivo) != NULL){
-		cont++;
-		menu_pt = (char **) realloc(menu_pt, sizeof(char *) * cont);
-		menu_pt[cont -1] = (char *) malloc(sizeof(char) * MAX_TEXTO);
-	}
-	
-	for(i=0; i < cont; i++) printf("%s\n", menu_pt[i]);
-	
+	// Associação dos textos
+	strcpy(menu_pt[0], "Iniciar");
+	strcpy(menu_pt[1], "Opções");
+	strcpy(menu_pt[2], "Créditos");
+	strcpy(menu_pt[3], "Sair");
 }
 
+// Tela inicial do jogo
 void inicio(){
-//	outtextxy();
+	int i, j, x, y;
+	x = 10;
+	y = 10;
+	for(i = 0; i < 4; i++){
+		outtextxy(x, y, menu_pt[i]);
+		y += 20;
+	}
 }
