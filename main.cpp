@@ -1,3 +1,8 @@
+/*
+TODO: INSERIR LINKS PARA AS IMAGENS
+	  
+*/
+
 #include<stdio.h>
 #include<conio.h>
 #include<unistd.h>
@@ -5,10 +10,6 @@
 #include<graphics.h>
 
 #define MAX_TEXTO 50
-
-// Variaveis
-char **menu_en;
-char **menu_pt;
 
 // Imagens
 void *creditos, *creditos_m, *iniciar, *iniciar_m, *opcoes, *opcoes_m, *sair, *sair_m;
@@ -39,9 +40,6 @@ void configura(){
 	
 	// Configuração de imagens
 	imagens();
-	
-	// Configuração de textos do menu em PT-BR
-	falas_pt();
 }
 
 void imagens(){
@@ -60,26 +58,6 @@ void imagens(){
 	getimage(0, 0, 211, 59, iniciar_m);
 	getch();
 	setactivepage(0);
-}
-
-// Configuracao das falas em PT-BR
-void falas_pt(){
-	int i;
-	int cont = 0;
-	int max_char = 50;
-	char buffer[max_char];
-	
-	// Alocação de memória
-	for(i = 1; i <= 5; i++)	{
-		menu_pt = (char **) realloc (menu_pt, sizeof(char *) * i);
-		menu_pt[i - 1] = (char *) malloc(sizeof(char) * max_char);
-	}
-	
-	// Associação dos textos
-	strcpy(menu_pt[0], "Iniciar");
-	strcpy(menu_pt[1], "Opções");
-	strcpy(menu_pt[2], "Créditos");
-	strcpy(menu_pt[3], "Sair");
 }
 
 // Tela inicial do jogo
