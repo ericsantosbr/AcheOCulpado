@@ -6,31 +6,67 @@ DONE: INSERIR LINKS PARA AS IMAGENS
 */
 
 #include<stdio.h>
+#include<stdlib.h>
 #include<conio.h>
 #include<unistd.h>
 #include<windows.h>
+#include<iostream>
 #include<graphics.h>
 
 #define MAX_TEXTO 50
 
+// Enums
+enum telas{
+	CETAF = 0,
+	ESTACAO,
+	PARQUE,
+	SHOPPING	
+};
+
 // Imagens
+
+// Tela inicial
 void *creditos, *creditos_m, *iniciar, *iniciar_m, *opcoes, *opcoes_m, *sair, *sair_m, *logo, *logo_m;
+
+// Fases do jogo
+void *cetaf, *cetaf_m, *estacao, *estacao_m, *parque, *parque_m, *shopping, *shopping_m;
 
 // Structs
 
+// Struct dos blocos das fazes. Oc -> "ocupado", c -> "cima", b -> "baixo", e -> "esquerda", d -> "direita"
+struct bloco{
+	int oc, c, b, e, d;
+};
+
+struct ponto{
+	int x, y;
+};
+
+
 // Funcoes
+// Configuracoes basicas do jogo
 void configura();
+void configuramapas();
 void imagens();
 int escala(int x, int y, int maxy);
 void falas_pt();
 void falas_en();
 void configuraimgs();
+
+// Telas Inicial e Um Jogador
 void inicio();
+void single();
+
+// Variaveis globais
+struct bloco cetafb[10][20], estacaob[10][20], parqueb[10][20], shoppingb[10][20];
+struct ponto pers;
+
 
 int main(){
-	initwindow(800, 550);
+	initwindow(800, 600);
 	configura();
-	inicio();
+//	inicio();
+	single();
 	getch();
 	closegraph();
 	return 0;
@@ -43,10 +79,105 @@ void configura(){
 	
 	// Configuração de imagens
 	imagens();
+	
+	// Configuração de colisão dos mapas
+	configuramapas();
+}
+
+void configuramapas(){
+	int i, j, k, cont, tam;
+	char buffer[50];
+	FILE *arq;
+	
+	// Configura o CETAF
+	arq = fopen(".//mapas//mapacetaf.txt", "r");
+	if(arq == NULL){
+		printf("\nArquivo de colisao do CETAF não encontrado!");
+		exit(-1);
+	}
+	
+	for(i = 0; i < 10; i++){
+		memset(buffer, 0, 20);
+		fgets(buffer, 30, arq);
+		tam = strlen(buffer);
+		buffer[tam] = '\0';
+		for(j = 0; j < 20; j++){
+			cetafb[i][j].oc = buffer[j] - 48;
+			printf("%d", cetafb[i][j].oc);
+		}
+		printf("\n");
+	}
+	
+	printf("\n\n");
+	
+	// Configura a Estacao
+	arq = fopen(".//mapas//mapaestacao.txt", "r");
+	if(arq == NULL){
+		printf("\nArquivo de colisao da Estacao não encontrado!");
+		exit(-1);
+	}
+	
+	for(i = 0; i < 10; i++){
+		memset(buffer, 0, 20);
+		fgets(buffer, 30, arq);
+		tam = strlen(buffer);
+		buffer[tam] = '\0';
+		for(j = 0; j < 20; j++){
+			estacaob[i][j].oc = buffer[j] - 48;
+			printf("%d", estacaob[i][j].oc);
+		}
+		printf("\n");
+	}
+	
+	printf("\n\n");
+	
+	// Configura o Parque
+	arq = fopen(".//mapas//mapaparque.txt", "r");
+	if(arq == NULL){
+		printf("\nArquivo de colisao do Parque não encontrado!");
+		exit(-1);
+	}
+	
+	for(i = 0; i < 10; i++){
+		memset(buffer, 0, 20);
+		fgets(buffer, 30, arq);
+		tam = strlen(buffer);
+		buffer[tam] = '\0';
+		for(j = 0; j < 20; j++){
+			parqueb[i][j].oc = buffer[j] - 48;
+			printf("%d", parqueb[i][j].oc);
+		}
+		printf("\n");
+	}
+	
+	printf("\n\n");
+	
+	// Configura o Shopping
+	arq = fopen(".//mapas//mapashopping.txt", "r");
+	if(arq == NULL){
+		printf("\nArquivo de colisao do Shopping não encontrado!");
+		exit(-1);
+	}
+	
+	for(i = 0; i < 10; i++){
+		memset(buffer, 0, 20);
+		fgets(buffer, 30, arq);
+		tam = strlen(buffer);
+		buffer[tam] = '\0';
+		for(j = 0; j < 20; j++){
+			shoppingb[i][j].oc = buffer[j] - 48;
+			printf("%d", shoppingb[i][j].oc);
+		}
+		printf("\n");
+	}
+	fclose(arq);
 }
 
 void imagens(){
 	setactivepage(3);
+	int maxtelax = 800;
+	int maxtelay = 400;
+	
 	// Imagens da tela inicial terão um padrão de altura 40, com largura definida pela função escala()
 	int maxalt = 40;
 	int scale = escala(619, 175, maxalt);
@@ -104,6 +235,23 @@ void imagens(){
 	readimagefile(".//cortes//logo_m.gif", 0, 0, scale, maxalt);
 	getimage(0, 0, scale - 1, maxalt - 1, logo_m);
 	
+	// Fases do jogo
+	cetaf = malloc(imagesize(0, 0, 800, 400));
+	readimagefile(".//assets//CetafAOC.gif", 0, 0, maxtelax, maxtelay);
+	getimage(0, 0, maxtelax - 1, maxtelay - 1, cetaf);
+	
+	estacao = malloc(imagesize(0, 0, 800, 400));
+	readimagefile(".//assets//EstacaoAOC.gif", 0, 0, maxtelax, maxtelay);
+	getimage(0, 0, maxtelax - 1, maxtelay - 1, estacao);
+	
+	parque = malloc(imagesize(0, 0, 800, 400));
+	readimagefile(".//assets/ParqueAOC.gif", 0, 0, maxtelax, maxtelay);
+	getimage(0, 0, maxtelax - 1, maxtelay - 1, parque);
+	
+	shopping = malloc(imagesize(0, 0, 800, 400));
+	readimagefile(".//assets//ShoppingAOC.gif", 0, 0, maxtelax, maxtelay);
+	getimage(0, 0, maxtelax - 1, maxtelay - 1, shopping);
+	
 	setactivepage(0);
 }
 
@@ -111,7 +259,6 @@ void imagens(){
 int escala(int x, int y, int maxy){
 	int saida;
 	saida = x / y * maxy;
-	printf("\n%d\n", saida);
 	return saida;
 }
 
@@ -181,3 +328,62 @@ void inicio(){
 		
 	}
 }
+
+
+void single(){
+	int x, y, z, atual, keep;
+	atual = ESTACAO;
+	keep = 1;
+	pers.x = 9;
+	pers.y = 2;
+	
+	while(keep == 1){
+		if (getactivepage() == 0) setactivepage(1);
+		else setactivepage(0);
+		cleardevice();
+		
+		// Desenha o mapa e a interface
+		if(atual == ESTACAO) putimage(0, 0, estacao, COPY_PUT);
+		else if(atual == CETAF) putimage(0, 0, cetaf, COPY_PUT);
+		else if(atual == PARQUE) putimage(0, 0, parque, COPY_PUT);
+		else if(atual == SHOPPING) putimage(0, 0, shopping, COPY_PUT);
+		
+		setfillstyle(1, BLUE);
+		bar(0, 400, getmaxx(), getmaxy());
+		
+		setfillstyle(1, BLACK);
+		bar(5, 405, getmaxx() - 5, getmaxy() - 5);
+		
+		setfillstyle(1, BLUE);
+		bar(10, 410, getmaxx() - 10, getmaxy() - 10);
+		
+		// Desenha o personagem
+		fillellipse((pers.x * 40)+ 20, (pers.y * 40)+ 20, 18, 18);
+		
+		// Controle do personagem
+		if(GetKeyState(VK_UP) & 0x80){
+			if(pers.y > 0){
+				
+			}
+		}
+		
+		if(GetKeyState(VK_DOWN) & 0x80){
+			if(pers.y < 9){
+				
+			}
+		}
+		
+		if(GetKeyState(VK_LEFT) & 0x80){
+			
+		}
+		
+		if(GetKeyState(VK_RIGHT) & 0x80){
+			
+		}
+		
+		if (getactivepage() == 0) setvisualpage(0);
+		else setvisualpage(1);
+	}
+}
+
+
