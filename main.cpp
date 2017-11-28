@@ -370,18 +370,65 @@ void single(){
 		// Controle do personagem
 		if(GetKeyState(VK_UP) & 0x80){
 			if(pers.y > 0){
-				
+				if(atual == CETAF){
+					delay(100);
+					if(cetafb[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
+				}
+				if(atual == ESTACAO){
+					delay(100);
+					if(estacaob[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
+				}
+				if(atual == PARQUE){
+					delay(100);
+					if(parqueb[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
+				}
+				if(atual == SHOPPING){
+					delay(100);
+					if(shoppingb[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
+				}
 			}
 		}
 		
 		if(GetKeyState(VK_DOWN) & 0x80){
 			if(pers.y < 9){
-				
+				if(atual == CETAF){
+					delay(100);
+					if(cetafb[pers.y + 1][pers.x].oc == 0) pers.y += 1;
+				}
+				if(atual == ESTACAO){
+					delay(100);
+					if(estacaob[pers.y + 1][pers.x].oc == 0) pers.y += 1;
+				}
+				if(atual == PARQUE){
+					delay(100);
+					if(parqueb[pers.y + 1][pers.x].oc == 0) pers.y += 1;
+				}
+				if(atual == SHOPPING){
+					delay(100);
+					if(shoppingb[pers.y + 1][pers.x].oc == 0) pers.y += 1;
+				}
 			}
 		}
 		
 		if(GetKeyState(VK_LEFT) & 0x80){
-			
+			if(pers.x > 0){
+				if(atual == CETAF){
+					delay(100);
+					if(cetafb[pers.y][pers.x + 1].oc == 0) pers.x -= 1;
+				}
+				if(atual == ESTACAO){
+					delay(100);
+					if(estacaob[pers.y][pers.x + 1].oc == 0) pers.x -= 1;
+				}
+				if(atual == PARQUE){
+					delay(100);
+					if(parqueb[pers.y][pers.x + 1].oc == 0) pers.x -= 1;
+				}
+				if(atual == SHOPPING){
+					delay(100);
+					if(shoppingb[pers.y][pers.x + 1].oc == 0) pers.x -= 1;
+				}
+			}
 		}
 		
 		if(GetKeyState(VK_RIGHT) & 0x80){
@@ -389,7 +436,7 @@ void single(){
 		}
 		
 		if(GetKeyState(VK_ESCAPE) & 0x80){
-			delay(100);
+			delay(400);
 			getimage(0, 0, getmaxx(), getmaxy(), freeze);
 			putimage(0, 0, freeze, COPY_PUT);
 			int keep2 = 1;
@@ -411,12 +458,14 @@ void single(){
 				settextstyle(0, HORIZ_DIR, 100);
 				outtextxy(180, 190, "Voltar ao Jogo");
 								
-				if(GetKeyState(VK_ESCAPE) & 0x80) keep2 = 0;
+				if(GetKeyState(VK_ESCAPE) & 0x80){
+					keep2 = 0;
+				}
 				
 				if(getactivepage() == 0) setvisualpage(0);
 				else(setvisualpage(1));
 			}
-			delay(100);
+			delay(450);
 		}
 		
 		if (getactivepage() == 0) setvisualpage(0);
