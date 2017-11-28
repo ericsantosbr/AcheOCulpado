@@ -12,6 +12,7 @@ DONE: INSERIR LINKS PARA AS IMAGENS
 #include<windows.h>
 #include<iostream>
 #include<graphics.h>
+#include<time.h>
 
 #define MAX_TEXTO 50
 
@@ -329,13 +330,19 @@ void inicio(){
 	}
 }
 
-
+// Jogo em Si
 void single(){
-	int x, y, z, atual, keep;
+	void *freeze;
+	int x, y, z, atual, keep, tamfreeze;
 	atual = ESTACAO;
 	keep = 1;
 	pers.x = 9;
 	pers.y = 2;
+	
+	tamfreeze = imagesize(0, 0, getmaxx(), getmaxy());
+	freeze = malloc(tamfreeze);
+	
+	delay(200);
 	
 	while(keep == 1){
 		if (getactivepage() == 0) setactivepage(1);
@@ -379,6 +386,37 @@ void single(){
 		
 		if(GetKeyState(VK_RIGHT) & 0x80){
 			
+		}
+		
+		if(GetKeyState(VK_ESCAPE) & 0x80){
+			delay(100);
+			getimage(0, 0, getmaxx(), getmaxy(), freeze);
+			putimage(0, 0, freeze, COPY_PUT);
+			int keep2 = 1;
+			while(keep2 == 1){
+				if(getactivepage() == 0) setactivepage(1);
+				else setactivepage(0);
+				cleardevice();
+				putimage(0, 0, freeze, COPY_PUT);
+				
+				setfillstyle(1, WHITE);
+				bar(150, 120, getmaxx() - 150, getmaxy() - 120);
+				
+				setfillstyle(1, BLUE);
+				bar(160, 130, getmaxx() - 160, getmaxy() - 130);
+				
+				settextstyle(0, HORIZ_DIR, 15);
+				outtextxy(180, 150, "Opções");
+				
+				settextstyle(0, HORIZ_DIR, 100);
+				outtextxy(180, 190, "Voltar ao Jogo");
+								
+				if(GetKeyState(VK_ESCAPE) & 0x80) keep2 = 0;
+				
+				if(getactivepage() == 0) setvisualpage(0);
+				else(setvisualpage(1));
+			}
+			delay(100);
 		}
 		
 		if (getactivepage() == 0) setvisualpage(0);
