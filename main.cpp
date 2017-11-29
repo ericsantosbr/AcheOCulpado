@@ -66,7 +66,7 @@ struct ponto pers;
 int main(){
 	initwindow(800, 600);
 	configura();
-//	inicio();
+	inicio();
 	single();
 	getch();
 	closegraph();
@@ -370,43 +370,25 @@ void single(){
 		// Controle do personagem
 		if(GetKeyState(VK_UP) & 0x80){
 			if(pers.y > 0){
-				if(atual == CETAF){
-					delay(100);
-					if(cetafb[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
-				}
-				if(atual == ESTACAO){
-					delay(100);
-					if(estacaob[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
-				}
-				if(atual == PARQUE){
-					delay(100);
-					if(parqueb[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
-				}
-				if(atual == SHOPPING){
-					delay(100);
-					if(shoppingb[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
-				}
+				if(atual == CETAF) if(cetafb[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
+				if(atual == ESTACAO) if(estacaob[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
+				if(atual == PARQUE) if(parqueb[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
+				if(atual == SHOPPING) if(shoppingb[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
+				delay(100);
 			}
 		}
 		
 		if(GetKeyState(VK_DOWN) & 0x80){
 			if(pers.y < 9){
-				if(atual == CETAF){
-					delay(100);
-					if(cetafb[pers.y + 1][pers.x].oc == 0) pers.y += 1;
-				}
+				if(atual == CETAF) if(cetafb[pers.y + 1][pers.x].oc == 0) pers.y += 1;
 				if(atual == ESTACAO){
-					delay(100);
+//					if(){
+//					}
 					if(estacaob[pers.y + 1][pers.x].oc == 0) pers.y += 1;
 				}
-				if(atual == PARQUE){
-					delay(100);
-					if(parqueb[pers.y + 1][pers.x].oc == 0) pers.y += 1;
-				}
-				if(atual == SHOPPING){
-					delay(100);
-					if(shoppingb[pers.y + 1][pers.x].oc == 0) pers.y += 1;
-				}
+				if(atual == PARQUE) if(parqueb[pers.y + 1][pers.x].oc == 0) pers.y += 1;
+				if(atual == SHOPPING)if(shoppingb[pers.y + 1][pers.x].oc == 0) pers.y += 1;
+				delay(100);
 			}
 		}
 		
@@ -414,25 +396,45 @@ void single(){
 			if(pers.x > 0){
 				if(atual == CETAF){
 					delay(100);
-					if(cetafb[pers.y][pers.x + 1].oc == 0) pers.x -= 1;
+					if(cetafb[pers.y][pers.x - 1].oc == 0) pers.x -= 1;
 				}
 				if(atual == ESTACAO){
 					delay(100);
-					if(estacaob[pers.y][pers.x + 1].oc == 0) pers.x -= 1;
+					if(estacaob[pers.y][pers.x - 1].oc == 0){
+						pers.x -= 1;
+						printf("%d", estacaob[pers.y][pers.x - 1].oc);
+					}
 				}
 				if(atual == PARQUE){
 					delay(100);
-					if(parqueb[pers.y][pers.x + 1].oc == 0) pers.x -= 1;
+					if(parqueb[pers.y][pers.x - 1].oc == 0) pers.x -= 1;
 				}
 				if(atual == SHOPPING){
 					delay(100);
-					if(shoppingb[pers.y][pers.x + 1].oc == 0) pers.x -= 1;
+					if(shoppingb[pers.y][pers.x - 1].oc == 0) pers.x -= 1;
 				}
 			}
 		}
 		
 		if(GetKeyState(VK_RIGHT) & 0x80){
-			
+			if(pers.x < 19){
+				if(atual == CETAF){
+					delay(100);
+					if(cetafb[pers.y][pers.x + 1].oc == 0) pers.x += 1;
+				}
+				if(atual == ESTACAO){
+					delay(100);
+					if(estacaob[pers.y][pers.x + 1].oc == 0) pers.x += 1;
+				}
+				if(atual == PARQUE){
+					delay(100);
+					if(parqueb[pers.y][pers.x + 1].oc == 0) pers.x += 1;
+				}
+				if(atual == SHOPPING){
+					delay(100);
+					if(shoppingb[pers.y][pers.x + 1].oc == 0) pers.x += 1;
+				}
+			}
 		}
 		
 		if(GetKeyState(VK_ESCAPE) & 0x80){
