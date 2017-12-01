@@ -57,6 +57,7 @@ void configuraimgs();
 // Telas Inicial e Um Jogador
 void inicio();
 void single();
+void plottext(char *texto, int limpa);
 
 // Variaveis globais
 struct bloco cetafb[10][20], estacaob[10][20], parqueb[10][20], shoppingb[10][20];
@@ -66,7 +67,7 @@ struct ponto pers;
 int main(){
 	initwindow(800, 600);
 	configura();
-	inicio();
+//	inicio();
 	single();
 	getch();
 	closegraph();
@@ -423,7 +424,10 @@ void single(){
 		if(GetKeyState(VK_UP) & 0x80){
 			if(pers.y > 0){
 				if(atual == CETAF) if(cetafb[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
-				if(atual == ESTACAO) if(estacaob[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
+				if(atual == ESTACAO){
+					if(pers.x == 10 && pers.y == 7) pers.y = 1;
+					else if(estacaob[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
+				}
 				if(atual == PARQUE) if(parqueb[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
 				if(atual == SHOPPING) if(shoppingb[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
 				delay(100);
@@ -434,9 +438,10 @@ void single(){
 			if(pers.y < 9){
 				if(atual == CETAF) if(cetafb[pers.y + 1][pers.x].oc == 0) pers.y += 1;
 				if(atual == ESTACAO){
-//					if(){
-//					}
-					if(estacaob[pers.y + 1][pers.x].oc == 0) pers.y += 1;
+					if(pers.x == 10 && pers.y == 1){
+						pers.y = 7;
+					}
+					else if(estacaob[pers.y + 1][pers.x].oc == 0) pers.y += 1;
 				}
 				if(atual == PARQUE) if(parqueb[pers.y + 1][pers.x].oc == 0) pers.y += 1;
 				if(atual == SHOPPING)if(shoppingb[pers.y + 1][pers.x].oc == 0) pers.y += 1;
@@ -454,7 +459,6 @@ void single(){
 					delay(100);
 					if(estacaob[pers.y][pers.x - 1].oc == 0){
 						pers.x -= 1;
-						printf("%d", estacaob[pers.y][pers.x - 1].oc);
 					}
 				}
 				if(atual == PARQUE){
@@ -527,4 +531,8 @@ void single(){
 	}
 }
 
+// Imprime na tela o texto caractere-a-caractere
+void plottext(char *texto, int limpa){
+	
+}
 
