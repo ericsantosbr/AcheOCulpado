@@ -25,7 +25,6 @@ enum telas{
 };
 
 // Imagens
-
 // Tela inicial
 void *creditos, *creditos_m, *iniciar, *iniciar_m, *opcoes, *opcoes_m, *sair, *sair_m, *logo, *logo_m;
 
@@ -33,10 +32,10 @@ void *creditos, *creditos_m, *iniciar, *iniciar_m, *opcoes, *opcoes_m, *sair, *s
 void *cetaf, *cetaf_m, *estacao, *estacao_m, *parque, *parque_m, *shopping, *shopping_m;
 
 // Structs
-
-// Struct dos blocos das fazes. Oc -> "ocupado", c -> "cima", b -> "baixo", e -> "esquerda", d -> "direita"
+// Struct dos blocos das fases. Oc -> "ocupado"; c -> "cima"; b -> "baixo"; e -> "esquerda"; d -> "direita"
 struct bloco{
 	int oc, c, b, e, d;
+	void *sprite;
 };
 
 struct ponto{
@@ -55,7 +54,7 @@ void falas_en();
 void configuraimgs();
 
 // Telas Inicial e Um Jogador
-void inicio();
+int inicio();
 void single();
 void plottext(char *texto, int limpa);
 
@@ -65,11 +64,18 @@ struct ponto pers;
 
 
 int main(){
+	int com, keep;
 	initwindow(800, 600);
 	configura();
-//	inicio();
-	single();
-	getch();
+	
+	keep = 1;
+	while(keep == 1){
+		com = inicio();
+		if(com == 1) single();
+		else if(com == 0){
+			keep = 0;
+		}
+	}
 	closegraph();
 	return 0;
 }
@@ -265,9 +271,9 @@ int escala(int x, int y, int maxy){
 }
 
 // Tela inicial do jogo
-void inicio(){
-	int i, j, x, y, keep, passoy, sel, numopc, lb, xb, yb, pb, ox, oy, ult, t, tam, keep2;
-	long int cont;
+int inicio(){
+	int i, j, x, y, keep, passoy, sel, numopc, lb, xb, yb, pb, ox, oy, t, tam, keep2, t2;
+	long long int ult;
 	char *pos, *buff1, *buff2, *saida;
 	void *fundo;
 	buff1 = (char *) malloc(sizeof(char) * 4);
@@ -299,7 +305,8 @@ void inicio(){
 	oy = y;
 	
 	// Tempo em milisegundos para aceitar o comando de uma tecla novamente
-	t = 80;
+	t = 100;
+	t2 = 500;
 	ult = clock();
 	
 	// Tamanho da imagem de fundo a ser capturada
@@ -311,7 +318,11 @@ void inicio(){
 		if(getactivepage() == 0) setactivepage(1);
 		else setactivepage(0);
 		cleardevice();
-		if(GetKeyState(VK_ESCAPE) & 0x80) keep = 0;
+		if(GetKeyState(VK_ESCAPE) & 0x80 && clock() - t2 > ult){
+			keep = 0;
+			ult = clock();
+			return 0;
+		}
 		
 		// Fundo
 		putimage(400, 50, logo_m, AND_PUT);
@@ -352,28 +363,8 @@ void inicio(){
 			ult = clock();
 		}
 		if(GetKeyState(VK_RETURN) & 0x80 && clock() - t > ult){
-			keep2 = 1;
-			
-			getimage(0, 0, getmaxx(), getmaxy(), fundo);
-			putimage(0, 0, fundo, COPY_PUT);
-			
 			if(sel == 0){
-				while(keep2 == 1){
-					if(getactivepage() == 0) setactivepage(1);
-					else setactivepage(0);
-					cleardevice();
-					putimage(0, 0, fundo, COPY_PUT);
-					
-					if(GetKeyState(VK_ESCAPE) & 0x80){
-						keep2 = 0;
-					}
-					
-//					setfillstyle();
-//					bar(400, )
-					
-					if(getactivepage() == 0) setvisualpage(0);
-					else setvisualpage(1);
-				}
+				return 1;
 			}
 		}
 		
@@ -386,7 +377,8 @@ void inicio(){
 // Jogo em Si
 void single(){
 	void *freeze;
-	int x, y, z, atual, keep, tamfreeze;
+	int x, y, z, atual, keep, tamfreeze, t, t2;
+	long long int ult;
 	atual = ESTACAO;
 	keep = 1;
 	pers.x = 9;
@@ -395,7 +387,12 @@ void single(){
 	tamfreeze = imagesize(0, 0, getmaxx(), getmaxy());
 	freeze = malloc(tamfreeze);
 	
-	delay(200);
+	// Controle de tempo e delay do jogo
+	
+	t = 100;
+	t2 = 300;
+	ult = clock();
+	
 	
 	while(keep == 1){
 		if (getactivepage() == 0) setactivepage(1);
@@ -421,7 +418,7 @@ void single(){
 		fillellipse((pers.x * 40)+ 20, (pers.y * 40)+ 20, 18, 18);
 		
 		// Controle do personagem
-		if(GetKeyState(VK_UP) & 0x80){
+		if(GetKeyState(VK_UP) & 0x80 && clock() - t > ult){
 			if(pers.y > 0){
 				if(atual == CETAF) if(cetafb[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
 				if(atual == ESTACAO){
@@ -430,11 +427,11 @@ void single(){
 				}
 				if(atual == PARQUE) if(parqueb[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
 				if(atual == SHOPPING) if(shoppingb[pers.y - 1][pers.x].oc == 0) pers.y -= 1;
-				delay(100);
 			}
+			ult = clock();
 		}
 		
-		if(GetKeyState(VK_DOWN) & 0x80){
+		if(GetKeyState(VK_DOWN) & 0x80 && clock() - t > ult){
 			if(pers.y < 9){
 				if(atual == CETAF) if(cetafb[pers.y + 1][pers.x].oc == 0) pers.y += 1;
 				if(atual == ESTACAO){
@@ -445,56 +442,51 @@ void single(){
 				}
 				if(atual == PARQUE) if(parqueb[pers.y + 1][pers.x].oc == 0) pers.y += 1;
 				if(atual == SHOPPING)if(shoppingb[pers.y + 1][pers.x].oc == 0) pers.y += 1;
-				delay(100);
+				ult = clock();
 			}
 		}
 		
-		if(GetKeyState(VK_LEFT) & 0x80){
+		if(GetKeyState(VK_LEFT) & 0x80 && clock() - t > ult){
 			if(pers.x > 0){
 				if(atual == CETAF){
-					delay(100);
 					if(cetafb[pers.y][pers.x - 1].oc == 0) pers.x -= 1;
 				}
+				
 				if(atual == ESTACAO){
-					delay(100);
 					if(estacaob[pers.y][pers.x - 1].oc == 0){
 						pers.x -= 1;
 					}
 				}
 				if(atual == PARQUE){
-					delay(100);
 					if(parqueb[pers.y][pers.x - 1].oc == 0) pers.x -= 1;
 				}
 				if(atual == SHOPPING){
-					delay(100);
 					if(shoppingb[pers.y][pers.x - 1].oc == 0) pers.x -= 1;
 				}
 			}
+			ult = clock();
 		}
 		
-		if(GetKeyState(VK_RIGHT) & 0x80){
+		if(GetKeyState(VK_RIGHT) & 0x80 && clock() - t > ult){
 			if(pers.x < 19){
 				if(atual == CETAF){
-					delay(100);
 					if(cetafb[pers.y][pers.x + 1].oc == 0) pers.x += 1;
 				}
 				if(atual == ESTACAO){
-					delay(100);
 					if(estacaob[pers.y][pers.x + 1].oc == 0) pers.x += 1;
 				}
 				if(atual == PARQUE){
-					delay(100);
 					if(parqueb[pers.y][pers.x + 1].oc == 0) pers.x += 1;
 				}
 				if(atual == SHOPPING){
-					delay(100);
 					if(shoppingb[pers.y][pers.x + 1].oc == 0) pers.x += 1;
 				}
 			}
+			ult = clock();
 		}
 		
-		if(GetKeyState(VK_ESCAPE) & 0x80){
-			delay(400);
+		if(GetKeyState(VK_ESCAPE) & 0x80 && clock() - t2 > ult){
+			delay(250);
 			getimage(0, 0, getmaxx(), getmaxy(), freeze);
 			putimage(0, 0, freeze, COPY_PUT);
 			int keep2 = 1;
@@ -511,19 +503,26 @@ void single(){
 				bar(160, 130, getmaxx() - 160, getmaxy() - 130);
 				
 				settextstyle(0, HORIZ_DIR, 15);
-				outtextxy(180, 150, "Opções");
+				outtextxy(180, 150, "Deseja Sair?");
 				
 				settextstyle(0, HORIZ_DIR, 100);
-				outtextxy(180, 190, "Voltar ao Jogo");
+				outtextxy(180, 190, "Enter - Sim");
+				
+				outtextxy(180, 210, "Esc - Não");
 								
 				if(GetKeyState(VK_ESCAPE) & 0x80){
+					keep2 = 0;
+				}
+				
+				if(GetKeyState(VK_RETURN) & 0x80){
+					keep = 0;
 					keep2 = 0;
 				}
 				
 				if(getactivepage() == 0) setvisualpage(0);
 				else(setvisualpage(1));
 			}
-			delay(450);
+			ult = clock();
 		}
 		
 		if (getactivepage() == 0) setvisualpage(0);
