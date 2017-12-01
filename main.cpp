@@ -265,22 +265,47 @@ int escala(int x, int y, int maxy){
 
 // Tela inicial do jogo
 void inicio(){
-	int i, j, x, y, keep, passoy, sel;
+	int i, j, x, y, keep, passoy, sel, numopc, lb, xb, yb, pb, ox, oy, ult, t, tam, keep2;
+	long int cont;
 	char *pos, *buff1, *buff2, *saida;
+	void *fundo;
 	buff1 = (char *) malloc(sizeof(char) * 4);
 	buff2 = (char *) malloc(sizeof(char) * 4);
 	saida = (char *) malloc(sizeof(char) * 15);
 	pos = (char *) malloc(sizeof(char) * 10);
-	int bx = 0;
-	int by = 0;
-	int lb = 20;
-	int pb = 2;
-	passoy = 60;
+	
+	// Distanciamento entre o plot das opçoes
+	passoy = 30;
+	
+	// Mantem o loop rodando
 	keep = 1;
-	x = 100;
-	y = 220;
-	printf("\n%d e %d\n", getmaxy() - lb, getmaxx() - lb);
+	
+	// Posicao dos plots
+	x = 80;
+	y = 300;
+	
+	// Variaveis de controle do bloco de retorno da selecao atual
+	lb = 15;
+	xb = (x - lb);
+	yb = y;
+	pb = passoy;
+	
+	// Opcao atual
 	sel = 0;
+	
+	// Origem X e Origem Y
+	ox = x;
+	oy = y;
+	
+	// Tempo em milisegundos para aceitar o comando de uma tecla novamente
+	t = 80;
+	ult = clock();
+	
+	// Tamanho da imagem de fundo a ser capturada
+	fundo = (void *) malloc(imagesize(0, 0, getmaxx(), getmaxy()));
+	
+	// Numero de Opcoes
+	numopc = 3;
 	while(keep == 1){
 		if(getactivepage() == 0) setactivepage(1);
 		else setactivepage(0);
@@ -291,38 +316,65 @@ void inicio(){
 		putimage(400, 50, logo_m, AND_PUT);
 		putimage(400, 50, logo, OR_PUT);
 		
-		// Plot das Opcoes		
-		putimage(x, y, iniciar_m, AND_PUT);
-		putimage(x, y, iniciar, OR_PUT);
+		// Plot das Opcoes
+		settextstyle(0, HORIZ_DIR, 3);
+		outtextxy(x, y, "Iniciar");
 		
 		y += passoy;
-		putimage(x, y, opcoes_m, AND_PUT);
-		putimage(x, y, opcoes, OR_PUT);
+		outtextxy(x, y, "Opcoes");
 		
 		y += passoy;
-		putimage(x, y, creditos_m, AND_PUT);
-		putimage(x, y, creditos, OR_PUT);
+		outtextxy(x, y, "Creditos");
 		
 		y += passoy;
-		putimage(x, y, sair_m, AND_PUT);
-		putimage(x, y, sair, OR_PUT);
+		outtextxy(x, y, "Sair");
 		
-		x = 100;
-		y = 220;
+		x = ox;
+		y = oy;
 		
+		// Imprime bloco de retorno de seleção atual
+		setfillstyle(1, YELLOW);
 		
-		// TESTE: INSERE BARRA PARA TESTAR POSICOES
-		if(GetKeyState(VK_UP) & 0x80 && by > 0) by -= pb;
-		if(GetKeyState(VK_DOWN) & 0x80 && by < getmaxy() - lb) by += pb;
-		if(GetKeyState(VK_LEFT) & 0x80 && bx > 0) bx -= pb;
-		if(GetKeyState(VK_RIGHT) & 0x80 && bx < getmaxx() - lb) bx += pb;
+		yb = (sel * pb) + oy;
 		
-		setfillstyle(1, WHITE);
-		bar(bx, by, bx + lb, by + lb);
+		setfillstyle(1, YELLOW);
+		bar(xb, yb, xb + lb, yb + lb);
 		
-		// TESTE: PLOT DA POSICAO
-		sprintf(saida, "(%d, %d)", bx, by);
-		outtextxy(getmaxx() - 80, getmaxy() - 20, saida);
+		yb = oy;
+		
+		if(GetKeyState(VK_UP) & 0x80  && clock() - t > ult){
+			if(sel > 0) sel -= 1;
+			ult = clock();
+		}
+		if(GetKeyState(VK_DOWN) & 0x80 && clock() - t > ult){
+			if(sel < numopc) sel += 1;
+			ult = clock();
+		}
+		if(GetKeyState(VK_RETURN) & 0x80 && clock() - t > ult){
+			keep2 = 1;
+			
+			getimage(0, 0, getmaxx(), getmaxy(), fundo);
+			putimage(0, 0, fundo, COPY_PUT);
+			
+			if(sel == 0){
+				while(keep2 == 1){
+					if(getactivepage() == 0) setactivepage(1);
+					else setactivepage(0);
+					cleardevice();
+					putimage(0, 0, fundo, COPY_PUT);
+					
+					if(GetKeyState(VK_ESCAPE) & 0x80){
+						keep2 = 0;
+					}
+					
+//					setfillstyle();
+//					bar(400, )
+					
+					if(getactivepage() == 0) setvisualpage(0);
+					else setvisualpage(1);
+				}
+			}
+		}
 		
 		if(getactivepage() == 0) setvisualpage(0);
 		else setvisualpage(1);
